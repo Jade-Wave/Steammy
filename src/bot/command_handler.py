@@ -24,11 +24,18 @@ def populate_commands(bot):
                                    f"for tracking different Steam stuff")
 
     @bot.command(name="search_user")
-    async def search_user(message):
-        await message.channel.send(
-            f"Searching: {message.message.content.replace('!search_user ', '')},\n"
-            f"Response is: "
-            f"{bot.steam_integration.users.search_user(message.message.content.replace('!search_user ', ''))}"
+    async def search_by_tag(message):
+        username = message.message.content.replace('!search_user ', '')
+        user = bot.steam_integration.get_steam_user(username)
+        if user != "The user was not found":
+            print_data = user.pretty_print()
+            avatar = discord.File(user.save_avatar())
+        else:
+            print_data = str(user)
+            avatar = None
+        await message.send(
+            f"Searching: {username}:\n{print_data}\n",
+            file=avatar
         )
 
 

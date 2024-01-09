@@ -19,6 +19,19 @@ class SteamUser:
             "resources"
         )
 
+        self.games = []
+
+    def get_top_games(self, amount):
+        result = ""
+        games = sorted(self.games, key=lambda game: game.playtime_forever)[::-1]
+        top_5 = games[:5]
+        for game in top_5:
+            result += (f"-----------------------------\n"
+                       f"**Name**: {game.name}\n"
+                       f"**Total playtime**: {round(game.playtime_forever / 60,2)}\n")
+
+        return result
+
     def save_avatar(self):
         if not os.path.exists(self.resources_folder):
             os.mkdir(self.resources_folder)

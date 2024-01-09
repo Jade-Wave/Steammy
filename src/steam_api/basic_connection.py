@@ -89,7 +89,7 @@ class SteamIntegration(steam.Steam):
                 app_sales += (f"**{game_data['name']}**:\n"
                               f"    **Original price**: {game_price_info['initial_formatted']}\n"
                               f"    **Price on sale**: {game_price_info['final_formatted']}\n"
-                              f"    **Discount**: {game_price_info['discount_percent']}\n\n")
+                              f"    **Discount**: -{game_price_info['discount_percent']}%\n\n")
         return app_sales
 
     def get_application_info(self, game, country="UA"):

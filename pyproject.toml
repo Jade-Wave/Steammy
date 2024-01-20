@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "steamtrackerbot"
-version = "0.0.0"
+version = "0.1.0"
 description = "Steam Tracker Discord bot"
 authors = ["Hhummann <hhummannv@gmail.com>"]
 license = "Jade Wave"

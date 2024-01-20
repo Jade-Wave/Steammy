@@ -2,6 +2,8 @@ import asyncio
 import datetime
 import time
 import steam
+import pathlib
+import os
 
 import threading
 
@@ -11,10 +13,19 @@ from Steammy.src.steam_api.user_game import UserGame
 
 class SteamIntegration(steam.Steam):
     def __init__(self):
+        self.resources_folder = pathlib.Path.joinpath(
+            pathlib.Path(__file__).parent.resolve().parent.resolve(),
+            "resources"
+        )
+        self.serializer_file = f"{self.resources_folder}/tracked_games.tracker"
+        if not os.path.exists(self.serializer_file):
+            with open(self.serializer_file, "w") as nothing:
+                pass
+        with open(self.serializer_file, "r") as reader:
+            self.game_track = [game.strip().split(":") for game in reader.readlines()]
         key = "CA3C1B047F7F4EB60DEF412D4AAD9595"
         super(SteamIntegration, self).__init__(key)
         self.located_users = {}
-        self.game_track = []
         self.break_the_cycle = False
         try:
             self.run_loop = asyncio.get_running_loop()
@@ -45,8 +56,11 @@ class SteamIntegration(steam.Steam):
     def add_game_for_track(self, game, country="UA"):
         if not game.isdigit():
             game = self.get_app_id(game, country)
-        if (game, country) not in self.game_track:
-            self.game_track.append((game, country))
+        if [game, country] not in self.game_track:
+            self.game_track.append([game, country])
+            with open(self.serializer_file, "w") as writer:
+                for this_game in self.game_track:
+                    writer.write(f"{':'.join([str(this_game[0]), str(this_game[1])])}\n")
             return f'Successfully added {game} to track list'
         else:
             return f"{game} is already tracked"
@@ -57,6 +71,9 @@ class SteamIntegration(steam.Steam):
         for track_game in self.game_track:
             if game == track_game[0]:
                 self.game_track.remove(track_game)
+                with open(self.serializer_file, "w") as writer:
+                    for this_game in self.game_track:
+                        writer.write(f"{':'.join([str(this_game[0]), str(this_game[1])])}\n")
                 return f"Successfully untracked {game}"
         return f"{game} is not tracked. Could not untrack"
 

@@ -3,8 +3,8 @@ import requests
 import os
 import pathlib
 
-class SteamUser:
 
+class SteamUser:
     def __init__(self, user_dict, user_tag):
         for key in user_dict.keys():
             self.__setattr__(key, user_dict[key])
@@ -24,8 +24,8 @@ class SteamUser:
     def get_top_games(self, amount):
         result = ""
         games = sorted(self.games, key=lambda game: game.playtime_forever)[::-1]
-        top_5 = games[:5]
-        for game in top_5:
+        top_amount = games[:amount]
+        for game in top_amount:
             result += (f"-----------------------------\n"
                        f"**Name**: {game.name}\n"
                        f"**Total playtime**: {round(game.playtime_forever / 60,2)}\n")

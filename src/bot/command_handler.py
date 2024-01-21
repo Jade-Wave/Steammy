@@ -46,6 +46,7 @@ def populate_commands(bot):
                                    f"    _Name/GameID_ - Game ID/Name\n"
                                    f"    country _<UA>_ - [optional] \"country\" + country code to track price in\n"
                                    f"**list_track** - Show all tracked games\n"
+                                   f"**track_now** - Show sales for tracked games without need to wait\n"
                                    )
 
     @bot.command(name="info")

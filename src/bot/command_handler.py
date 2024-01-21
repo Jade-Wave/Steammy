@@ -1,5 +1,7 @@
+import datetime
 import threading
 import asyncio
+from typing import Sequence
 
 import steam
 
@@ -92,7 +94,7 @@ def populate_commands(bot):
             f"{bot.steam_integration.get_application_info(game, country)}"
         )
 
-    @discord.ext.tasks.loop(minutes=1)
+    @discord.ext.tasks.loop(hours=2)
     async def discounter(message: Message):
         result = bot.steam_integration.run_discount_check(message)
         if result != "":
@@ -106,6 +108,8 @@ def populate_commands(bot):
 
     @bot.command(name="start_tracker")
     async def start_tracker(message: Message):
+        if discounter.is_running():
+            await message.send("Tracker is already running")
         discounter.start(message)
         await message.send(
             f"Successfully started tracker"
@@ -113,6 +117,8 @@ def populate_commands(bot):
 
     @bot.command(name="stop_tracker")
     async def stop_tracker(message: Message):
+        if not discounter.is_running():
+            await message.send("Tracker is not running")
         discounter.stop()
         await message.send("Successfully stopped tracker")
 
@@ -134,6 +140,14 @@ def populate_commands(bot):
     @bot.command(name="list_track")
     async def list_track(message: Message):
         await message.send(bot.steam_integration.see_games_on_track(message))
+
+    @bot.command(name="track_now")
+    async def track_now(message: Message):
+        result = bot.steam_integration.run_discount_check(message)
+        if result != "":
+            await message.send(f"{result}")
+        else:
+            await message.send("No games are being tracked or there are no sales going on at the moment")
 
 
 def main():

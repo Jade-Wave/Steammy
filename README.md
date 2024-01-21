@@ -35,7 +35,7 @@ This action is required if you want to track games on your server<br />
 
 ### Development setup
 To develop me and test stuff, you need to setup the environment
-for me.<br \>
+for me.<br />
 When there is a `||` in the code, Windows option is on the left, Linux is on the right
 ```commandline
 git clone https://github.com/Jade-Wave/Steammy.git

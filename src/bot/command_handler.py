@@ -1,5 +1,7 @@
+import datetime
 import threading
 import asyncio
+from typing import Sequence
 
 import steam
 
@@ -21,9 +23,11 @@ def populate_commands(bot):
 
     @bot.command(name="help")
     async def help(message: Message):
-        await message.channel.send(f"**ping** - pong\n"
+        await message.channel.send(f"----**STEAMMY**----\n\n"
+                                   f"_command prefix_ - !\n\n"
+                                   f"**ping** - pong\n"
                                    f"**help** - Show this message\n"
-                                   f"**info** - SteamTrackerBot description\n"
+                                   f"**info** - Steammy description\n"
                                    f"**search_user** - Find Steam user\n"
                                    f"**top_played** - User's top played games\n"
                                    f"    _steam64id_ - Steam user 64ID\n"
@@ -31,6 +35,8 @@ def populate_commands(bot):
                                    f"**app_details** - Get app details for a given <country> (default is UA)\n"
                                    f"    _Name/GameID_ - Game ID/Name\n"
                                    f"    country _<UA>_ - [optional] \"country\" + country code to track price in\n"
+                                   f"**register_tracker** - register your server (guild) for game tracker."
+                                   f"This action is mandatory for game tracking\n"
                                    f"**start_tracker** - Start Steam sale tracker\n"
                                    f"**stop_tracker** - Stop Steam sale tracker\n"
                                    f"**track_game** - Track Steam sale of a given game in a given country\n"
@@ -40,12 +46,12 @@ def populate_commands(bot):
                                    f"    _Name/GameID_ - Game ID/Name\n"
                                    f"    country _<UA>_ - [optional] \"country\" + country code to track price in\n"
                                    f"**list_track** - Show all tracked games\n"
+                                   f"**track_now** - Show sales for tracked games without need to wait\n"
                                    )
 
     @bot.command(name="info")
     async def info(message: Message):
-        message.channel.guild.name
-        await message.channel.send(f"**SteamTrackerBot** is an interactive bot created "
+        await message.channel.send(f"Hey, I'm **Steammy** - an interactive bot created "
                                    f"for tracking different Steam stuff")
 
     @bot.command(name="search_user")
@@ -89,14 +95,22 @@ def populate_commands(bot):
             f"{bot.steam_integration.get_application_info(game, country)}"
         )
 
-    @discord.ext.tasks.loop(minutes=1)
+    @discord.ext.tasks.loop(hours=2)
     async def discounter(message: Message):
-        result = bot.steam_integration.run_discount_check()
+        result = bot.steam_integration.run_discount_check(message)
         if result != "":
             await message.send(f"{result}")
 
+    @bot.command(name="register_tracker")
+    async def register_tracker(message: Message):
+        await message.send(
+            f"{bot.steam_integration.register_guild_tracker(message)}"
+        )
+
     @bot.command(name="start_tracker")
     async def start_tracker(message: Message):
+        if discounter.is_running():
+            await message.send("Tracker is already running")
         discounter.start(message)
         await message.send(
             f"Successfully started tracker"
@@ -104,6 +118,8 @@ def populate_commands(bot):
 
     @bot.command(name="stop_tracker")
     async def stop_tracker(message: Message):
+        if not discounter.is_running():
+            await message.send("Tracker is not running")
         discounter.stop()
         await message.send("Successfully stopped tracker")
 
@@ -115,16 +131,24 @@ def populate_commands(bot):
         country = "UA"
         if len(parsed) > 1:
             country = parsed[1]
-        await message.send(f"{bot.steam_integration.add_game_for_track(game, country)}")
+        await message.send(f"{bot.steam_integration.add_game_for_track(message, game, country)}")
 
     @bot.command(name="untrack_game")
     async def untrack_game(message: Message):
         content = message.message.content.replace('!untrack_game ', '')
-        await message.send(f"{bot.steam_integration.remove_game_for_track(content)}")
+        await message.send(f"{bot.steam_integration.remove_game_for_track(message, content)}")
 
     @bot.command(name="list_track")
     async def list_track(message: Message):
-        await message.send(bot.steam_integration.see_games_on_track())
+        await message.send(bot.steam_integration.see_games_on_track(message))
+
+    @bot.command(name="track_now")
+    async def track_now(message: Message):
+        result = bot.steam_integration.run_discount_check(message)
+        if result != "":
+            await message.send(f"{result}")
+        else:
+            await message.send("No games are being tracked or there are no sales going on at the moment")
 
 
 def main():

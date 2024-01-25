@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "steamtrackerbot"
-version = "0.1.0"
-description = "Steam Tracker Discord bot"
+name = "steammy"
+version = "0.2.0"
+description = "Steammy Discord bot"
 authors = ["Hhummann <hhummannv@gmail.com>"]
 license = "Jade Wave"
 readme = "README.md"

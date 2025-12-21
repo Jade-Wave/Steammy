@@ -1,18 +1,12 @@
-[tool.poetry]
+[project]
 name = "steammy"
-version = "0.2.0"
-description = "Steammy Discord bot"
-authors = ["Hhummann <hhummannv@gmail.com>"]
-license = "Jade Wave"
+version = "0.1.0"
+description = "Discord Steam bot"
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.11"
-python-steam-api = "^1.2.2"
-discord-py = "^2.3.2"
-beautifulsoup4 = "^4.12.2"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires-python = ">=3.13"
+dependencies = [
+    "python-steam-api",
+    "discord-py",
+    "beautifulsoup4",
+    "python-dotenv>=1.2.1",
+]

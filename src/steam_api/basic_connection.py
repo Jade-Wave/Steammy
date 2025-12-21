@@ -1,18 +1,18 @@
 import asyncio
 import datetime
 import time
-import steam
+import steam_web_api
 import pathlib
 import os
 from discord.message import Message
 
 import threading
 
-from Steammy.src.steam_api.steam_user import SteamUser
-from Steammy.src.steam_api.user_game import UserGame
+from src.steam_api.steam_user import SteamUser
+from src.steam_api.user_game import UserGame
 
 
-class SteamIntegration(steam.Steam):
+class SteamIntegration(steam_web_api.Steam):
     def __init__(self):
         self.game_track = None
         self.serializer_file = None

@@ -3,13 +3,13 @@ import threading
 import asyncio
 from typing import Sequence
 
-import steam
+import steam_web_api
 
-from Steammy.src.bot.bot_base import BotBase
+from src.bot.bot_base import BotBase
 import discord.ext.commands.context
 import discord.ext.tasks
 from discord.message import Message
-from Steammy.src.steam_api.basic_connection import SteamIntegration
+from src.steam_api.basic_connection import SteamIntegration
 
 
 def setup_steam(bot):
@@ -155,5 +155,5 @@ def main():
     bot = BotBase()
     setup_steam(bot)
     populate_commands(bot)
-    bot.apps = steam.Apps(bot)
+    bot.apps = steam_web_api.Apps(bot)
     return bot

@@ -1,4 +1,4 @@
-from steam.apps import Apps
+from steam_web_api.apps import Apps
 
 class UserGame(Apps):
     def __init__(self, game_dict, client):

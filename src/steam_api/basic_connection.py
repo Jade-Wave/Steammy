@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import dotenv
 import time
 import steam_web_api
 import pathlib
@@ -20,7 +21,8 @@ class SteamIntegration(steam_web_api.Steam):
             pathlib.Path(__file__).parent.resolve().parent.resolve(),
             "resources"
         )
-        key = "CA3C1B047F7F4EB60DEF412D4AAD9595"
+        dotenv.load_dotenv()
+        key = os.getenv("STEAM_KEY")
         super(SteamIntegration, self).__init__(key)
         self.located_users = {}
         self.break_the_cycle = False
